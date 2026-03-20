@@ -1,4 +1,14 @@
+from Course import Course
 from db_connect import get_connection
+from student_dba import conn
+
+
+def get_all_courses():
+    q = 'select id,name from courses;'
+    with conn.cursor() as cur:
+        cur.execute(q)
+        res = cur.fetchall()
+        return [Course(r[0], r[1]) for r in res]
 
 
 def get_course_and_tasks_by_id(id) -> dict:
@@ -39,7 +49,7 @@ def get_course_and_tasks_by_id(id) -> dict:
         }
 
 
-def get_course_by_id(id) -> dict:
+def get_course_by_id(id) -> Course:
     with get_connection() as conn:
         cur = conn.cursor()
 
@@ -58,7 +68,27 @@ def get_course_by_id(id) -> dict:
 
         id, name = course_row
 
-        return {
-            "id": id,
-            "name": name,
-        }
+        return Course(id, name)
+
+
+def make_course(new_course: Course) -> Course:
+    q = f"insert into courses(name) values ('{new_course.name}') returning id "
+    with conn.cursor() as cur:
+        cur.execute(q)
+        r = cur.fetchone()
+        conn.commit()
+
+        if r is not None:
+            return Course(r[0], new_course.name)
+    return None
+
+
+def rename_course(new_course: Course) -> Course:
+    q = (f"""update courses
+            set name = N'{new_course.name}' 
+            where id = {new_course.id};""")
+    with conn.cursor() as cur:
+        cur.execute(q)
+        conn.commit()
+
+    return get_course_by_id(new_course.id)

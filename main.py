@@ -2,7 +2,8 @@ from datetime import datetime
 
 from flask import Flask, jsonify, request
 
-from courses_dba import get_course_and_tasks_by_id, get_course_by_id
+from Course import Course
+from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course
 from db_connect import get_connection
 from student import Student
 from student_dba import make_student, rename_student, get_all_students, get_student_by_id
@@ -70,10 +71,36 @@ def get_course(id):
     course = get_course_by_id(id)
     if course is None:
         return jsonify({'message': 'Course Not Found'}), 404
-    return jsonify(course)
+    return jsonify(course.to_dict())
+
+@app.get('/courses')
+def get_courses():
+    courses = get_all_courses()
+    courses_2 = [r.to_dict() for r in courses]
+    return jsonify(courses_2)
 
 
+@app.post('/courses')
+def create_course():
+    id = 0
+    name = request.get_json()['name']
+    tmp_course = Course(id, name)
+    added_course = make_course(tmp_course)
 
+    return jsonify({
+        "message": "Course created",
+        "name": name,
+        "id": added_course.id
+    })
+
+@app.put('/courses/<int:id>')
+def edit_course(id: int):
+    name = request.get_json()['name']
+    tmp_course = Course(id, name)
+    edited_course = rename_course(tmp_course)
+    if edited_course is None:
+        return jsonify({'message': 'Course Not Found'}), 404
+    return jsonify(edited_course.to_dict())
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
