@@ -42,5 +42,15 @@ def rename_student(new_student: Student) -> Student:
 
     return get_student_by_id(new_student.id)
 
+def delete_student(id: int) -> Student:
+    deleted_student = get_student_by_id(id)
+    print(deleted_student)
+    if deleted_student is not None:
+        q = (f"""delete from students            
+                where id = {id};""")
+        with conn.cursor() as cur:
+            cur.execute(q)
+            conn.commit()
 
+    return deleted_student
 

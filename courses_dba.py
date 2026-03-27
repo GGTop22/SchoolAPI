@@ -92,3 +92,16 @@ def rename_course(new_course: Course) -> Course:
         conn.commit()
 
     return get_course_by_id(new_course.id)
+
+
+def delete_course(id: int) -> Course:
+    deleted_course = get_course_by_id(id)
+    print(deleted_course)
+    if deleted_course is not None:
+        q = (f"""delete from courses            
+                where id = {id};""")
+        with conn.cursor() as cur:
+            cur.execute(q)
+            conn.commit()
+
+    return deleted_course

@@ -2,11 +2,14 @@ from datetime import datetime
 
 from flask import Flask, jsonify, request
 
+from Assignment import Assignment
 from Course import Course
-from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course
+from assignments_dba import get_assignment, add_assignment, rewrite_progress
+from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course, \
+    delete_course
 from db_connect import get_connection
 from student import Student
-from student_dba import make_student, rename_student, get_all_students, get_student_by_id
+from student_dba import make_student, rename_student, get_all_students, get_student_by_id, delete_student
 
 app = Flask(__name__)
 
@@ -66,12 +69,14 @@ def get_course_with_tasks(id):
         return jsonify({'message': 'Course Not Found'}), 404
     return jsonify(course)
 
+
 @app.get('/courses/<int:id>')
 def get_course(id):
     course = get_course_by_id(id)
     if course is None:
         return jsonify({'message': 'Course Not Found'}), 404
     return jsonify(course.to_dict())
+
 
 @app.get('/courses')
 def get_courses():
@@ -93,6 +98,7 @@ def create_course():
         "id": added_course.id
     })
 
+
 @app.put('/courses/<int:id>')
 def edit_course(id: int):
     name = request.get_json()['name']
@@ -101,6 +107,69 @@ def edit_course(id: int):
     if edited_course is None:
         return jsonify({'message': 'Course Not Found'}), 404
     return jsonify(edited_course.to_dict())
+
+
+@app.get('/assignments')
+def get_assignments():
+    student_id = request.args.get('student_id')
+    course_id = request.args.get('course_id')
+    assignment = get_assignment(student_id, course_id)
+    if assignment is None:
+        return jsonify({'message': 'Assignment Not Found'}), 404
+    return jsonify(assignment.to_dict())
+
+
+@app.put('/assignments') #Разобраться что на входе (смотри блокнот 12 Тест )
+def edit_assignment(student_id, course_id):
+    name = request.get_json()['name']
+    tmp_as = Assignment(student_id, course_id)
+    edited_assignment = rewrite_progress(tmp_as)
+    if edited_assignment is None:
+        return jsonify({'message': 'Assignment Not Found'}), 404
+    return jsonify(edited_assignment.to_dict())
+
+
+@app.post('/assignments')
+def add_student_to_course():
+    student_id = request.get_json()['student_id']
+    course_id = request.get_json()['course_id']
+    assignment = get_assignment(student_id, course_id)
+    if assignment is None:
+        # добавить assignment в базу данных
+        course = get_course_by_id(course_id)
+        if course is None:
+            return jsonify({'message': 'Course Not Found'}), 404
+        student = get_student_by_id(student_id)
+        if student is None:
+            return jsonify({'message': 'Student Not Found'}), 404
+        new_assignment = Assignment(student, course, progress=0)
+        add_assignment(new_assignment)
+        return jsonify(new_assignment.to_dict())
+    else:
+        return jsonify({'message': 'Unable to add Student to the course (already included)'}), 403
+
+
+@app.delete('/courses/<int:id>')
+def del_course(id: int):
+    try:
+        deleted_course = delete_course(id)
+        if deleted_course is None:
+            return jsonify({'message': 'Course Not Found'}), 404
+        return jsonify(deleted_course.to_dict())
+    except Exception as e:
+        return jsonify({'message': 'Unable to delete this course'}), 403
+
+
+@app.delete('/students/<int:id>')
+def del_student(id: int):
+    try:
+        deleted_student = delete_student(id)
+        if deleted_student is None:
+            return jsonify({'message': 'Student Not Found'}), 404
+        return jsonify(deleted_student.to_dict())
+    except Exception as e:
+        return jsonify({'message': 'Unable to delete this student'}), 403
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
