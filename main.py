@@ -120,13 +120,21 @@ def get_assignments():
 
 
 @app.put('/assignments') #Разобраться что на входе (смотри блокнот 12 Тест )
-def edit_assignment(student_id, course_id):
-    name = request.get_json()['name']
-    tmp_as = Assignment(student_id, course_id)
-    edited_assignment = rewrite_progress(tmp_as)
-    if edited_assignment is None:
-        return jsonify({'message': 'Assignment Not Found'}), 404
-    return jsonify(edited_assignment.to_dict())
+def edit_assignment():
+    student_id = request.get_json()['student_id']
+    course_id = request.get_json()['course_id']
+    progress = request.get_json()['progress']
+    tmp_stud = Student(student_id,'')
+    tmp_course = Course(course_id,'')
+    try:
+        tmp_as = Assignment(tmp_stud,tmp_course, progress)
+        edited_assignment = rewrite_progress(tmp_as)
+
+        if edited_assignment is None:
+            return jsonify({'message': 'Assignment Not Found'}), 404
+        return jsonify(edited_assignment.to_dict())
+    except Exception as e:
+        return jsonify({'message': str(e)}),400
 
 
 @app.post('/assignments')

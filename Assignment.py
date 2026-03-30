@@ -11,6 +11,9 @@ class Assignment:
         self.student = student
         self.course = course
         self.progress = progress
+        if progress < 0 or progress > 100:
+            raise ValueError("progress should be between 0 and 100")
+
 
     def to_dict(self) -> dict:
         return {
