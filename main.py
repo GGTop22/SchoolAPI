@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 
 from Assignment import Assignment
 from Course import Course
-from assignments_dba import get_assignment, add_assignment, rewrite_progress
+from assignments_dba import get_assignment, add_assignment, rewrite_progress, delete_assignment
 from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course, \
     delete_course
 from db_connect import get_connection
@@ -157,6 +157,10 @@ def add_student_to_course():
         return jsonify({'message': 'Unable to add Student to the course (already included)'}), 403
 
 
+
+
+
+
 @app.delete('/courses/<int:id>')
 def del_course(id: int):
     try:
@@ -177,6 +181,24 @@ def del_student(id: int):
         return jsonify(deleted_student.to_dict())
     except Exception as e:
         return jsonify({'message': 'Unable to delete this student'}), 403
+
+
+@app.delete('/assignments')
+def del_assignment():
+    student_id = request.get_json()['student_id']
+    course_id = request.get_json()['course_id']
+    progress = 100
+    tmp_stud = Student(student_id,'')
+    tmp_course = Course(course_id,'')
+    try:
+        tmp_as = Assignment(tmp_stud, tmp_course, progress)
+        deleted_assignment = delete_assignment(tmp_as)
+
+        if deleted_assignment is None:
+            return jsonify({'message': 'Assignment Not Found'}), 404
+        return jsonify({"message": "Student removed from course"})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
 
 
 if __name__ == "__main__":

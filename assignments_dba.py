@@ -41,3 +41,16 @@ def rewrite_progress(new_assignment: Assignment) -> Assignment:
         conn.commit()
 
     return get_assignment(student_id=new_assignment.student.id, course_id=new_assignment.course.id)
+
+
+def delete_assignment(old_assignment: Assignment):
+    deleted_assignment = get_assignment(old_assignment.student.id, old_assignment.course.id)
+    print(deleted_assignment)
+    if deleted_assignment is not None:
+        q = (f"""delete from assignments            
+                where student_id = {old_assignment.student.id} and course_id = {old_assignment.course.id};""")
+        with conn.cursor() as cur:
+            cur.execute(q)
+            conn.commit()
+
+    return deleted_assignment
