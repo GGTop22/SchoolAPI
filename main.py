@@ -4,12 +4,14 @@ from flask import Flask, jsonify, request
 
 from Assignment import Assignment
 from Course import Course
+from Task import Task
 from assignments_dba import get_assignment, add_assignment, rewrite_progress, delete_assignment
 from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course, \
     delete_course
 from db_connect import get_connection
 from student import Student
 from student_dba import make_student, rename_student, get_all_students, get_student_by_id, delete_student
+from tasks_dba import get_tasks_by_course_id, get_tasks_by_id, add_task
 
 app = Flask(__name__)
 
@@ -119,22 +121,22 @@ def get_assignments():
     return jsonify(assignment.to_dict())
 
 
-@app.put('/assignments') #Разобраться что на входе (смотри блокнот 12 Тест )
+@app.put('/assignments')  # Разобраться что на входе (смотри блокнот 12 Тест )
 def edit_assignment():
     student_id = request.get_json()['student_id']
     course_id = request.get_json()['course_id']
     progress = request.get_json()['progress']
-    tmp_stud = Student(student_id,'')
-    tmp_course = Course(course_id,'')
+    tmp_stud = Student(student_id, '')
+    tmp_course = Course(course_id, '')
     try:
-        tmp_as = Assignment(tmp_stud,tmp_course, progress)
+        tmp_as = Assignment(tmp_stud, tmp_course, progress)
         edited_assignment = rewrite_progress(tmp_as)
 
         if edited_assignment is None:
             return jsonify({'message': 'Assignment Not Found'}), 404
         return jsonify(edited_assignment.to_dict())
     except Exception as e:
-        return jsonify({'message': str(e)}),400
+        return jsonify({'message': str(e)}), 400
 
 
 @app.post('/assignments')
@@ -155,10 +157,6 @@ def add_student_to_course():
         return jsonify(new_assignment.to_dict())
     else:
         return jsonify({'message': 'Unable to add Student to the course (already included)'}), 403
-
-
-
-
 
 
 @app.delete('/courses/<int:id>')
@@ -188,8 +186,8 @@ def del_assignment():
     student_id = request.get_json()['student_id']
     course_id = request.get_json()['course_id']
     progress = 100
-    tmp_stud = Student(student_id,'')
-    tmp_course = Course(course_id,'')
+    tmp_stud = Student(student_id, '')
+    tmp_course = Course(course_id, '')
     try:
         tmp_as = Assignment(tmp_stud, tmp_course, progress)
         deleted_assignment = delete_assignment(tmp_as)
@@ -201,7 +199,55 @@ def del_assignment():
         return jsonify({'message': str(e)}), 400
 
 
+@app.get('/tasks/course/<int:id>')
+def get_tasks_by_course(id: int):
+    try:
+        tasks_list = get_tasks_by_course_id(id)
+    except Exception as e:
+        return jsonify({'message': str(e)}), 404
+    if tasks_list is None:
+        return jsonify({'message': 'Course has no tasks'}), 404
+    tasks_2 = [t.to_dict() for t in tasks_list]
+    return jsonify(tasks_2)
+
+
+@app.get('/tasks/<int:id>')
+def get_one_task(id: int):
+    task = get_tasks_by_id(id)
+    if task is None:
+        return jsonify({'message': 'Task Not Found'}), 404
+    return jsonify(task.to_dict())
+
+
+@app.post('/tasks')
+def create_task():
+    task_id = 0
+    if "task_name" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    task_name = request.get_json()['task_name']
+    if "content" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    task_contents = request.get_json()['content']
+    if "solution_example" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    task_solution_example = request.get_json()['solution_example']
+    if "course_id" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    task_course_id = request.get_json()['course_id']
+    course = get_course_by_id(task_course_id)
+    if course is None:
+        return jsonify({'message': 'Course Not Found'}), 404
+    new_task = Task(task_id, task_name, task_contents, task_solution_example, course)
+    added_task = add_task(new_task)
+    return jsonify(added_task.to_dict())
+
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
     conn = get_connection()
     cursor = conn.cursor()
+
+    # @app.delete('/task')
+    # def del_task():
