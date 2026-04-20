@@ -241,7 +241,27 @@ def create_task():
     added_task = add_task(new_task)
     return jsonify(added_task.to_dict())
 
+@app.put('/tasks/<int:id>')
+def update_task(id: int):
+    task_name = request.get_json()['task_name']
+    content = request.get_json()['content']
+    solution_example = request.get_json()['solution_example']
+    try:
+        edited_task = update_task(task_name, content, solution_example)
 
+        if edited_task is None:
+            return jsonify({'message': 'Task Not Found'}), 404
+        return jsonify(edited_task.to_dict())
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+def delete_task(id: int):
+    id = request.json['id']
+    task_name = request.get_json()['task_name']
+    content = request.get_json()['content']
+    solution_example = request.get_json()['solution_example']
+    if task is None:
 
 
 if __name__ == "__main__":
@@ -251,3 +271,4 @@ if __name__ == "__main__":
 
     # @app.delete('/task')
     # def del_task():
+
