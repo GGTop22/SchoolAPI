@@ -5,13 +5,15 @@ from flask import Flask, jsonify, request
 from Assignment import Assignment
 from Course import Course
 from Task import Task
+from Work import Work
 from assignments_dba import get_assignment, add_assignment, rewrite_progress, delete_assignment
 from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course, \
     delete_course
 from db_connect import get_connection
 from student import Student
 from student_dba import make_student, rename_student, get_all_students, get_student_by_id, delete_student
-from tasks_dba import get_tasks_by_course_id, get_tasks_by_id, add_task
+from tasks_dba import get_tasks_by_course_id, get_tasks_by_id, add_task, delete_task
+from work_dba import get_work_by_id, add_work, delete_work
 
 app = Flask(__name__)
 
@@ -241,6 +243,7 @@ def create_task():
     added_task = add_task(new_task)
     return jsonify(added_task.to_dict())
 
+
 @app.put('/tasks/<int:id>')
 def update_task(id: int):
     task_name = request.get_json()['task_name']
@@ -256,12 +259,66 @@ def update_task(id: int):
         return jsonify({'message': str(e)}), 400
 
 
-def delete_task(id: int):
-    id = request.json['id']
-    task_name = request.get_json()['task_name']
-    content = request.get_json()['content']
-    solution_example = request.get_json()['solution_example']
+@app.delete('/tasks/<int:id>')
+def remove_task(id: int):
+    try:
+        deleted_task = delete_task(id)
+        if deleted_task is None:
+            return jsonify({'message': 'Task Not Found'}), 404
+        return jsonify(deleted_task.to_dict())
+    except Exception as e:
+        return jsonify({'message': 'Unable to delete this task'}), 403
+
+
+@app.get('/work/<int:id>')
+def get_one_work(id: int):
+    work = get_work_by_id(id)
+    if work is None:
+        return jsonify({'message': 'Work Not Found'}), 404
+    return jsonify(work.to_dict())
+
+
+@app.post('/work')
+def create_work():
+    work_id = 0
+    if "student_id" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    student_id = request.get_json()['student_id']
+    if "task_id" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    task_id = request.get_json()['task_id']
+    if "solution" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    solution = request.get_json()['solution']
+    if "comment" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    comment = request.get_json()['comment']
+    if "submit_time" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    submit_time = request.get_json()['submit_time']
+    if "mark" not in request.json:
+        return jsonify({'message': 'Invalid data'}), 400
+    mark = request.get_json()['mark']
+    task = get_tasks_by_id(task_id)
     if task is None:
+        return jsonify({'message': 'Task Not Found'}), 404
+    student = get_student_by_id(student_id)
+    if student is None:
+        return jsonify({'message': 'Student Not Found'}), 404
+    new_work = Work(work_id, student, task, solution, comment, submit_time, mark)
+    added_work = add_work(new_work)
+    return jsonify(added_work.to_dict())
+
+
+@app.delete('/work/<int:id>')
+def remove_work(id: int):
+    try:
+        deleted_work = delete_work(id)
+        if deleted_work is None:
+            return jsonify({'message': 'Work Not Found'}), 404
+        return jsonify(deleted_work.to_dict())
+    except Exception as e:
+        return jsonify({'message': 'Unable to delete this work'}), 403
 
 
 if __name__ == "__main__":
@@ -271,4 +328,3 @@ if __name__ == "__main__":
 
     # @app.delete('/task')
     # def del_task():
-

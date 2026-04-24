@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9463fa13-35dc-4fbd-bb6a-572282ec2679" name="Changes" comment=" сделали task POST">
-      <change beforePath="$PROJECT_DIR$/.idea/SchoolAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SchoolAPI.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="9463fa13-35dc-4fbd-bb6a-572282ec2679" name="Changes" comment="task_update done">
+      <change afterPath="$PROJECT_DIR$/Work.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work_dba.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks_dba.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks_dba.py" afterDir="false" />
@@ -32,12 +32,12 @@
     &quot;assignee&quot;: &quot;GGTop22&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/GGTop22/SchoolAPI.git",
-    "accountId": "3dff85cc-865f-46a0-ac90-a981c4de6217"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/GGTop22/SchoolAPI.git&quot;,
+    &quot;accountId&quot;: &quot;3dff85cc-865f-46a0-ac90-a981c4de6217&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -57,6 +57,7 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.main.executor": "Run",
+    "Python.work_dba.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -91,7 +92,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1773075137009</updated>
-      <workItem from="1776700925753" duration="3201000" />
+      <workItem from="1776700925753" duration="3983000" />
+      <workItem from="1777049054002" duration="8811000" />
     </task>
     <task id="LOCAL-00001" summary="Finished tests 1,2,3,4,5,8,13">
       <option name="closed" value="true" />
@@ -157,7 +159,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775846286391</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="task_update done">
+      <option name="closed" value="true" />
+      <created>1776704592548</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1776704592548</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -170,6 +180,11 @@
     <MESSAGE value="продолжаем делать assignments" />
     <MESSAGE value=" сделали delete" />
     <MESSAGE value=" сделали task POST" />
-    <option name="LAST_COMMIT_MESSAGE" value=" сделали task POST" />
+    <MESSAGE value="task_update done" />
+    <option name="LAST_COMMIT_MESSAGE" value="task_update done" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/SchoolAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1777056257600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SchoolAPI$work_dba.coverage" NAME="work_dba Coverage Results" MODIFIED="1777056248461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -65,14 +65,12 @@ def add_task(new_task: Task) -> Task | None:
     return None
 
 
-def delete_task(old_task: Task):
-    deleted_task = get_task(old_task.id, old_task.task_name, old_task.content, old_task.solution_example,
-                            old_task.course_id)
+def delete_task(old_task_id: int) -> Task | None:
+    deleted_task = get_tasks_by_id(old_task_id)
     print(deleted_task)
     if deleted_task is not None:
-        q = (f"""delete from task 
-                 where id = {old_task.id} and task_name = {old_task.task_name} and content = {old_task.content} 
-                 and solution_example = {old_task.solution_example} and course_id = {old_task.course_id} """)
+        q = f"""delete from task 
+                 where id = {old_task_id};"""
         with conn.cursor() as cur:
             cur.execute(q)
             conn.commit()
