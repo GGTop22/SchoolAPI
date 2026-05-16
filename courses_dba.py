@@ -105,3 +105,17 @@ def delete_course(id: int) -> Course:
             conn.commit()
 
     return deleted_course
+
+
+def get_student_courses(student_id) -> list[Course]:
+    conn = get_connection()
+    q = f"""select c.id, c.name
+            from assignments a join students s on s.id = a.student_id 
+                               join courses c on c.id = a.course_id 
+            where student_id={student_id}"""
+    with conn.cursor() as cur:
+        cur.execute(q)
+        rows = cur.fetchall()
+        if rows is None:
+            return []
+    return [Course(id=row[0], name=row[1]) for row in rows]

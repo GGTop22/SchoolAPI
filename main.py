@@ -8,12 +8,13 @@ from Task import Task
 from Work import Work
 from assignments_dba import get_assignment, add_assignment, rewrite_progress, delete_assignment
 from courses_dba import get_course_and_tasks_by_id, get_course_by_id, get_all_courses, make_course, rename_course, \
-    delete_course
+    delete_course, get_student_courses
 from db_connect import get_connection
 from student import Student
 from student_dba import make_student, rename_student, get_all_students, get_student_by_id, delete_student
-from tasks_dba import get_tasks_by_course_id, get_tasks_by_id, add_task, delete_task
-from work_dba import get_work_by_id, add_work, delete_work
+from tasks_dba import get_tasks_by_course_id, get_tasks_by_id, add_task, delete_task, task_update
+from work_dba import get_work_by_id, add_work, delete_work, get_all_works, update_work, get_works_by_student_id, \
+    get_unmarked_works_by_course
 
 app = Flask(__name__)
 
@@ -246,11 +247,17 @@ def create_task():
 
 @app.put('/tasks/<int:id>')
 def update_task(id: int):
-    task_name = request.get_json()['task_name']
-    content = request.get_json()['content']
-    solution_example = request.get_json()['solution_example']
+    old_task = get_tasks_by_id(id)
+    if old_task is None:
+        return jsonify({'message': 'Task Not Found'}), 404
+    if "task_name" in request.json:
+        old_task.task_name = request.get_json()['task_name']
+    if "content" in request.json:
+        old_task.content = request.get_json()['content']
+    if "solution_example" in request.json:
+        old_task.solution_example = request.get_json()['solution_example']
     try:
-        edited_task = update_task(task_name, content, solution_example)
+        edited_task = task_update(old_task)
 
         if edited_task is None:
             return jsonify({'message': 'Task Not Found'}), 404
@@ -294,11 +301,13 @@ def create_work():
         return jsonify({'message': 'Invalid data'}), 400
     comment = request.get_json()['comment']
     if "submit_time" not in request.json:
-        return jsonify({'message': 'Invalid data'}), 400
-    submit_time = request.get_json()['submit_time']
+        submit_time = datetime.now()
+    else:
+        submit_time = request.get_json()['submit_time']
     if "mark" not in request.json:
-        return jsonify({'message': 'Invalid data'}), 400
-    mark = request.get_json()['mark']
+        mark = None
+    else:
+        mark = request.get_json()['mark']
     task = get_tasks_by_id(task_id)
     if task is None:
         return jsonify({'message': 'Task Not Found'}), 404
@@ -319,6 +328,64 @@ def remove_work(id: int):
         return jsonify(deleted_work.to_dict())
     except Exception as e:
         return jsonify({'message': 'Unable to delete this work'}), 403
+
+
+@app.put('/work/<int:id>')
+def rewrite_work(id: int):
+    try:
+        # new_work = Work(id, None, None, request.get_json()['solution'], request.get_json()['comment'],
+        #                 request.get_json()['submit_time'], request.get_json()['mark'])
+        old_work = get_work_by_id(id)
+        if old_work is None:
+            return jsonify({'message': 'Work Not Found'}), 404
+        if "solution" in request.json:
+            old_work.solution = request.get_json()['solution']
+        if "comment" in request.json:
+            old_work.comment = request.get_json()['comment']
+        if "submit_time" in request.json:
+            old_work.submit_time = request.get_json()['submit_time']
+        if "mark" in request.json:
+            old_work.mark = request.get_json()['mark']
+        updated_work = update_work(old_work)
+        if updated_work is None:
+            return jsonify({'message': 'Unable to update this work'}), 403
+        return jsonify(updated_work.to_dict())
+    except Exception as e:
+        return jsonify({'message': 'Unable to update this work' + str(e)}), 403
+
+
+@app.get('/work')
+def get_works():
+    works = get_all_works()
+    works_2 = [r.to_dict() for r in works]
+    return jsonify(works_2)
+
+@app.get('/work/course/<int:id>/unmarked')
+def get_unmarked_works(id:int):
+    course = get_course_by_id(id)
+    if course is None:
+        return jsonify({'message': 'Course Not Found'}), 404
+    works = get_unmarked_works_by_course(course)
+    works_2 = [r.to_dict() for r in works]
+    return jsonify(works_2)
+
+@app.get('/students/<int:id>/courses')
+def get_courses_of_student(id: int):
+    student = get_student_by_id(id)
+    if student is None:
+        return jsonify({'message': 'Student Not Found'}), 404
+    courses = get_student_courses(id)
+    courses_2 = [r.to_dict() for r in courses]
+    return jsonify(courses_2)
+
+@app.get('/students/<int:id>/works')
+def get_work_by_student_id(id: int):
+    student = get_student_by_id(id)
+    if student is None:
+        return jsonify({'message': 'Student Not Found'}), 404
+    works = get_works_by_student_id(id)
+    works_2 = [r.to_dict() for r in works]
+    return jsonify(works_2)
 
 
 if __name__ == "__main__":

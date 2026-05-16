@@ -78,11 +78,11 @@ def delete_task(old_task_id: int) -> Task | None:
     return deleted_task
 
 
-def task_update(old_task: Task, new_task: Task) -> Task | None:
+def task_update( new_task: Task) -> Task | None:
     q = (f"""update task
             set task_name = N'{new_task.task_name}'
-            and content = {new_task.content}
-            and solution_example = {new_task.solution_example} 
+            , content = '{new_task.content}'
+            , solution_example = '{new_task.solution_example}'
             where id = {new_task.id};""")
     with conn.cursor() as cur:
         cur.execute(q)

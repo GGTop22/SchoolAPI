@@ -23,6 +23,9 @@ def get_assignment(student_id, course_id) -> Assignment:
         return Assignment(Student(id=student_id, fio=fio), Course(id=course_id, name=name), progress=progress)
 
 
+
+
+
 def add_assignment(new_assignment):
     conn = get_connection()
     q = f"""insert into assignments (student_id, course_id, progress) values({new_assignment.student.id}, {new_assignment.course.id}, {new_assignment.progress})"""  #
