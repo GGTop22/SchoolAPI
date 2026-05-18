@@ -7,7 +7,7 @@ from student import Student
 
 def get_work_by_id(old_work_id: int) -> Work | None:
     conn = get_connection()
-    q = f"""select w.id, w.student_id,w.task_id,w.comment,w.solution,w.submit_time,w.mark,
+    q = f"""select w.id, w.student_id,w.task_id,w.comment,w.solution,w.submit_time,w.mark,w.isArchived,
                    t.id, t.task_name,t.content,t.solution_example,
                    t.course_id,c.name,s.id,s.fio
             from task t join courses c on t.course_id=c.id join work w on t.id=w.task_id join students s on (s.id=w.student_id)              
@@ -30,7 +30,7 @@ def get_work_by_id(old_work_id: int) -> Work | None:
 
 def get_all_works() -> list[Work]:
     conn = get_connection()
-    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,
+    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,w.isArchived,
                    t.id, t.task_name,t.content,t.solution_example,
                    t.course_id,c.name,s.id,s.fio
             from task t join courses c on t.course_id=c.id join work w on t.id=w.task_id join students s on (s.id=w.student_id)"""
@@ -43,7 +43,7 @@ def get_all_works() -> list[Work]:
 
 def get_unmarked_works_by_course(course:Course) -> list[Work]:
     conn = get_connection()
-    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,
+    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,w.isArchived,
                    t.id, t.task_name,t.content,t.solution_example,
                    t.course_id,c.name,s.id,s.fio
             from task t join courses c on t.course_id=c.id join work w on t.id=w.task_id join students s on (s.id=w.student_id) WHERE course_id = {course.id} and w.mark is null"""
@@ -57,20 +57,22 @@ def get_unmarked_works_by_course(course:Course) -> list[Work]:
 
 def add_work(new_work: Work) -> Work | None:
     conn = get_connection()
+    qq = f"""update work set isArchived = true where student_id = {new_work.student.id} and task_id = {new_work.task.id}"""
     if new_work.mark is None:
-        q = f"""insert into work (student_id,task_id, solution, comment, submit_time,mark)
-        values( {new_work.student.id}, {new_work.task.id}, '{new_work.solution}', '{new_work.comment}', '{new_work.submit_time}',null) returning id;"""
+        q = f"""insert into work (student_id,task_id, solution, comment, submit_time,mark,isArchived)
+        values( {new_work.student.id}, {new_work.task.id}, '{new_work.solution}', '{new_work.comment}', '{new_work.submit_time}',null,'{new_work.isArchived}') returning id;"""
     else:
-        q = f"""insert into work (student_id,task_id, solution, comment, submit_time,mark)
-        values( {new_work.student.id}, {new_work.task.id}, '{new_work.solution}', '{new_work.comment}', '{new_work.submit_time}', {new_work.mark}) returning id;"""
+        q = f"""insert into work (student_id,task_id, solution, comment, submit_time,mark,isArchived)
+        values( {new_work.student.id}, {new_work.task.id}, '{new_work.solution}', '{new_work.comment}', '{new_work.submit_time}', {new_work.mark}),{new_work.isArchived}returning id;"""
     print(q)
     with conn.cursor() as cur:
+        cur.execute(qq)
         cur.execute(q)
         row = cur.fetchone()
         conn.commit()
         if row is not None:
             return Work(row[0], new_work.student, new_work.task, new_work.solution, new_work.comment,
-                        new_work.submit_time, new_work.mark)
+                        new_work.submit_time, new_work.mark, new_work.isArchived)
     return None
 
 
@@ -100,7 +102,7 @@ def update_work(new_work: Work) -> Work | None:
 def get_works_by_student_id(student_id: int) -> list[Work]:
     conn = get_connection()
     works = []
-    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,
+    q = f"""select w.id, w.student_id,w.task_id,w.solution,w.submit_time,w.mark,w.isArchived,
                    t.id, t.task_name,t.content,t.solution_example,
                    t.course_id,c.name,s.id,s.fio
             from task t join courses c on t.course_id=c.id join work w on t.id=w.task_id join students s on (s.id=w.student_id)

@@ -11,9 +11,10 @@ class Work:
     comment: str
     submit_time: str
     mark: int
+    isArchived: bool
 
 
-    def __init__(self, id, student, task, solution, comment, submit_time,mark=None):
+    def __init__(self, id, student, task, solution, comment, submit_time,mark=None, isArchived = False):
         self.id = id
         self.student = student
         self.task = task
@@ -21,6 +22,7 @@ class Work:
         self.comment = comment
         self.mark = mark
         self.submit_time = submit_time
+        self.isArchived = isArchived
 
     def set_mark(self, mark):
         if mark >= 0 and mark <= 7:
@@ -34,7 +36,8 @@ class Work:
             'solution': self.solution,
             'comment': self.comment,
             'mark': self.mark,
-            'submit_time': self.submit_time
+            'submit_time': self.submit_time,
+            'isArchived': self.isArchived
         }
 
     def __str__(self):

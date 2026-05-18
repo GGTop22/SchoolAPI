@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9463fa13-35dc-4fbd-bb6a-572282ec2679" name="Changes" comment="task_update done">
+    <list default="true" id="9463fa13-35dc-4fbd-bb6a-572282ec2679" name="Changes" comment="create_work&#10;remove_work&#10;rewrite_work&#10;get_works&#10;get_unmarked_works&#10;get_courses_of_student&#10;get_work_by_student_id">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Work.py" beforeDir="false" afterPath="$PROJECT_DIR$/Work.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assignments_dba.py" beforeDir="false" afterPath="$PROJECT_DIR$/assignments_dba.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/courses_dba.py" beforeDir="false" afterPath="$PROJECT_DIR$/courses_dba.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks_dba.py" beforeDir="false" afterPath="$PROJECT_DIR$/tasks_dba.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/work_dba.py" beforeDir="false" afterPath="$PROJECT_DIR$/work_dba.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,7 +99,8 @@
       <workItem from="1777796259927" duration="9855000" />
       <workItem from="1778256096959" duration="8643000" />
       <workItem from="1778861771955" duration="4676000" />
-      <workItem from="1778922514643" duration="311000" />
+      <workItem from="1778922514643" duration="710000" />
+      <workItem from="1779123469927" duration="1379000" />
     </task>
     <task id="LOCAL-00001" summary="Finished tests 1,2,3,4,5,8,13">
       <option name="closed" value="true" />
@@ -177,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1776704592548</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="create_work&#10;remove_work&#10;rewrite_work&#10;get_works&#10;get_unmarked_works&#10;get_courses_of_student&#10;get_work_by_student_id">
+      <option name="closed" value="true" />
+      <created>1778922833753</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1778922833753</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,7 +196,8 @@
     <MESSAGE value=" сделали delete" />
     <MESSAGE value=" сделали task POST" />
     <MESSAGE value="task_update done" />
-    <option name="LAST_COMMIT_MESSAGE" value="task_update done" />
+    <MESSAGE value="create_work&#10;remove_work&#10;rewrite_work&#10;get_works&#10;get_unmarked_works&#10;get_courses_of_student&#10;get_work_by_student_id" />
+    <option name="LAST_COMMIT_MESSAGE" value="create_work&#10;remove_work&#10;rewrite_work&#10;get_works&#10;get_unmarked_works&#10;get_courses_of_student&#10;get_work_by_student_id" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SchoolAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1778867995653" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
